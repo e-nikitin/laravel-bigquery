@@ -3,6 +3,7 @@
 namespace nikitin\BigQuery;
 
 use Google\Cloud\BigQuery\BigQueryClient;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Madewithlove\IlluminatePsrCacheBridge\Laravel\CacheItemPool;
 use Illuminate\Support\Arr;
@@ -22,24 +23,30 @@ class BigQuery
     {
         $bigQueryConfig = config('bigquery');
         $project_id = empty($project_id) ? $bigQueryConfig['project_id'] : $project_id;
-        
+
+        $store = Cache::store($bigQueryConfig['auth_cache_store']);
+        $cache = new CacheItemPool($store);
+
         $clientConfig = array_merge([
             'projectId' => $project_id,
             'keyFilePath' => $bigQueryConfig['application_credentials'],
-            'authCache' => $this->configureCache($bigQueryConfig['auth_cache_store']),
+            'authCache' => $cache,
         ], Arr::get($bigQueryConfig, 'client_options', []));
 
         return new BigQueryClient($clientConfig);
     }
 
+
     /**
-     * @param $cacheStore
-     * @return CacheItemPool
+     * @param Collection $data
      */
-    protected function configureCache($cacheStore)
+    public function prepareData(Collection $data): void
     {
-        $store = Cache::store($cacheStore);
-        $cache = new CacheItemPool($store);
-        return $cache;
+        $data->transform(function ($item) {
+            return [
+                'data' => $item
+            ];
+        });
     }
+
 }

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Facade;
  * @package nikitin\BigQuery\Facades
  *
  * @method static \Google\Cloud\BigQuery\BigQueryClient makeClient($project_id = null)
+ * @method static void prepareData(\Illuminate\Support\Collection $data)
  */
 class BigQuery extends Facade
 {
