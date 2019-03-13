@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Facade;
  *
  * @method static \Google\Cloud\BigQuery\BigQueryClient makeClient($project_id = null)
  * @method static void prepareData(\Illuminate\Support\Collection $data)
+ * @method static bool truncate(string $dataset, string $table, string $project_id = null)
  */
 class BigQuery extends Facade
 {

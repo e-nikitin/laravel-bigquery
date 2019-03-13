@@ -49,4 +49,16 @@ class BigQuery
         });
     }
 
+    /**
+     * @param string $dataset
+     * @param string $table
+     * @param string|null $project_id
+     * @return bool
+     */
+    public function truncate(string $dataset, string $table, string $project_id = null){
+        $client = $this->makeClient($project_id);
+        $query = $client->query("DELETE FROM $dataset.$table WHERE 1=1");
+        return $client->runQuery($query)->isComplete();
+    }
+
 }
