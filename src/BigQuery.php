@@ -91,7 +91,17 @@ class BigQuery
      */
     public function runQuery(QueryJobConfiguration $query, BigQueryClient $client, int $try = 5){
         try{
-            return $client->runQuery($query);
+            $qr = $client->runQuery($query);
+            $timer = 60;
+            while ($timer <= 0){
+                if ($qr->isComplete()){
+                    return $qr;
+                }
+                sleep(1);
+                $qr->reload();
+            }
+
+            return $qr;
         }catch (\Exception $e){
             if ($try <= 0)
                 throw $e;

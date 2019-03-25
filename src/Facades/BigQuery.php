@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void prepareData(\Illuminate\Support\Collection $data)
  * @method static bool truncate(string $dataset, string $table, string $project_id = null)
  * @method static array handleSelectResult(array $data)
- * @method static \Google\Cloud\BigQuery\QueryResults runQuery(\Google\Cloud\BigQuery\QueryJobConfiguration $query, \Google\Cloud\BigQuery\BigQueryClient $client, int $try)
+ * @method static \Google\Cloud\BigQuery\QueryResults runQuery(\Google\Cloud\BigQuery\QueryJobConfiguration $query, \Google\Cloud\BigQuery\BigQueryClient $client, int $try = 5)
  */
 class BigQuery extends Facade
 {
