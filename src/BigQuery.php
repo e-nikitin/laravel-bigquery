@@ -99,6 +99,7 @@ class BigQuery
                 }
                 sleep(1);
                 $qr->reload();
+                --$timer;
             }
 
             return $qr;
