@@ -104,7 +104,7 @@ class BigQuery
 
             return $qr;
         }catch (\Exception $e){
-            if ($try <= 0)
+            if ($try <= 0 || $e->getCode() != 403)
                 throw $e;
             sleep(2);
             return $this->runQuery($query, $client, --$try);
