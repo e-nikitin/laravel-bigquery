@@ -3,6 +3,7 @@
 namespace nikitin\BigQuery;
 
 use Google\Cloud\BigQuery\BigQueryClient;
+use Google\Cloud\BigQuery\QueryJobConfiguration;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Madewithlove\IlluminatePsrCacheBridge\Laravel\CacheItemPool;
@@ -59,6 +60,44 @@ class BigQuery
         $client = $this->makeClient($project_id);
         $query = $client->query("DELETE FROM $dataset.$table WHERE 1=1");
         return $client->runQuery($query)->isComplete();
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function handleSelectResult(array $data){
+        if (!Arr::get($data, 'rows', false))
+            return [];
+
+        $fields = collect($data['schema']['fields'])->map(function ($item) {
+            return $item['name'];
+        })->toArray();
+
+        return collect($data['rows'])
+            ->map(function ($item) use ($fields){
+                return collect($item['f'])->mapWithKeys(function ($item, $k) use ($fields){
+                    return [$fields[$k] => $item['v']];
+                });
+            })->toArray();
+    }
+
+    /**
+     * @param QueryJobConfiguration $query
+     * @param BigQueryClient $client
+     * @param int $try
+     * @return \Google\Cloud\BigQuery\QueryResults
+     * @throws \Exception
+     */
+    public function runQuery(QueryJobConfiguration $query, BigQueryClient $client, int $try = 5){
+        try{
+            return $client->runQuery($query);
+        }catch (\Exception $e){
+            if ($try <= 0)
+                throw $e;
+            sleep(2);
+            return $this->runQuery($query, $client, --$try);
+        }
     }
 
 }
