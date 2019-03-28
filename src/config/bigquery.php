@@ -53,6 +53,14 @@ return [
     'client_options' => [
         'retries' => 3, // Default
     ],
-
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Sleep time if 403 error
+    |--------------------------------------------------------------------------
+    |
+    | This option controls sleep time when the 403 error occurs.
+    |
+    */
     'sleep_time_403' => 10
 ];

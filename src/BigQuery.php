@@ -59,7 +59,7 @@ class BigQuery
     public function truncate(string $dataset, string $table, string $project_id = null){
         $client = $this->makeClient($project_id);
         $query = $client->query("DELETE FROM $dataset.$table WHERE 1=1");
-        return $client->runQuery($query)->isComplete();
+        return $this->runQuery($query, $client)->isComplete();
     }
 
     /**
