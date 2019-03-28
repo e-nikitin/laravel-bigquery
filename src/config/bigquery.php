@@ -53,4 +53,6 @@ return [
     'client_options' => [
         'retries' => 3, // Default
     ],
+
+    'sleep_time_403' => 10
 ];
