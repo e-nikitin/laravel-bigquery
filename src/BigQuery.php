@@ -106,7 +106,7 @@ class BigQuery
         }catch (\Exception $e){
             if ($try <= 0 || $e->getCode() != 403)
                 throw $e;
-            sleep(config('bigquery.sleep_time_403', 5));
+            sleep(config('bigquery.sleep_time_403', 10));
             return $this->runQuery($query, $client, --$try);
         }
     }
