@@ -133,7 +133,7 @@ class BigQuery
         $schema = [
             'fields' => collect($fields)->map(function ($k) use ($tableFields) {
                 return $tableFields->first(function ($field) use ($k) {
-                    return $field['name'] == $k;
+                    return strtolower($field['name']) == strtolower($k);
                 });
             })->values()->toArray()
         ];
