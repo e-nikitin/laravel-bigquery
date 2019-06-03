@@ -2,12 +2,9 @@
 
 namespace nikitin\BigQuery;
 
-use App\Helpers\ExceptionNotificator\ExceptionNotificator;
 use Google\Cloud\BigQuery\BigQueryClient;
 use Google\Cloud\BigQuery\QueryJobConfiguration;
 use Google\Cloud\Core\ExponentialBackoff;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Madewithlove\IlluminatePsrCacheBridge\Laravel\CacheItemPool;
