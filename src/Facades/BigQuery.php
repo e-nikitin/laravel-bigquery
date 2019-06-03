@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool truncate(string $dataset, string $table, string $project_id = null)
  * @method static array handleSelectResult(array $data)
  * @method static \Google\Cloud\BigQuery\QueryResults runQuery(\Google\Cloud\BigQuery\QueryJobConfiguration $query, \Google\Cloud\BigQuery\BigQueryClient $client, int $try = 5)
- * @method static void saveFromFile(string $file, array $fields, $project_id = null)
+ * @method static void saveFromFile(string $file, string $table, array $fields, string $dataset = null, $project_id = null)
  */
 class BigQuery extends Facade
 {
