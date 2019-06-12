@@ -19,7 +19,7 @@ class BigQueryServiceProvider extends ServiceProvider //implements DeferrablePro
     {
         $source = realpath(__DIR__.'/config/bigquery.php');
         $this->publishes([
-            $source => config_path('bigquery.php')
+            $source => config_path('bigquery.php'),
         ], 'laravel-bigquery');
     }
 
@@ -37,12 +37,10 @@ class BigQueryServiceProvider extends ServiceProvider //implements DeferrablePro
 
     protected function guardAgainstInvalidConfiguration(array $bigQueryConfig = null)
     {
-        if (! file_exists($bigQueryConfig['application_credentials'])) {
+        if (!file_exists($bigQueryConfig['application_credentials'])) {
             throw InvalidConfiguration::credentialsJsonDoesNotExist($bigQueryConfig['application_credentials']);
         }
     }
-
- 
 
     /**
      * @return array

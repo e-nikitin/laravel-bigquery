@@ -7,7 +7,7 @@ namespace nikitin\LaravelBigQuery;
 class ExampleTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Test that true does in fact equal true
+     * Test that true does in fact equal true.
      */
     public function testTrueIsTrue()
     {

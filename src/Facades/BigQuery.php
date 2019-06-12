@@ -1,11 +1,11 @@
 <?php
+
 namespace nikitin\BigQuery\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Class BigQuery
- * @package nikitin\BigQuery\Facades
+ * Class BigQuery.
  *
  * @method static \Google\Cloud\BigQuery\BigQueryClient makeClient($project_id = null)
  * @method static void prepareData(\Illuminate\Support\Collection $data)

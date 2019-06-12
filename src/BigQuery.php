@@ -5,20 +5,19 @@ namespace nikitin\BigQuery;
 use Google\Cloud\BigQuery\BigQueryClient;
 use Google\Cloud\BigQuery\QueryJobConfiguration;
 use Google\Cloud\Core\ExponentialBackoff;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Madewithlove\IlluminatePsrCacheBridge\Laravel\CacheItemPool;
-use Illuminate\Support\Arr;
 
 /**
- * Class BigQuery
- * @package nikitin\BigQuery
+ * Class BigQuery.
  */
 class BigQuery
 {
-
     /**
      * @param string|null $project_id
+     *
      * @return BigQueryClient
      */
     public function makeClient(string $project_id = null)
@@ -30,14 +29,13 @@ class BigQuery
         $cache = new CacheItemPool($store);
 
         $clientConfig = array_merge([
-            'projectId' => $project_id,
+            'projectId'   => $project_id,
             'keyFilePath' => $bigQueryConfig['application_credentials'],
-            'authCache' => $cache,
+            'authCache'   => $cache,
         ], Arr::get($bigQueryConfig, 'client_options', []));
 
         return new BigQueryClient($clientConfig);
     }
-
 
     /**
      * @param Collection $data
@@ -46,32 +44,36 @@ class BigQuery
     {
         $data->transform(function ($item) {
             return [
-                'data' => $item
+                'data' => $item,
             ];
         });
     }
 
     /**
-     * @param string $dataset
-     * @param string $table
+     * @param string      $dataset
+     * @param string      $table
      * @param string|null $project_id
+     *
      * @return bool
      */
     public function truncate(string $dataset, string $table, string $project_id = null)
     {
         $client = $this->makeClient($project_id);
         $query = $client->query("DELETE FROM $dataset.$table WHERE 1=1");
+
         return $this->runQuery($query, $client)->isComplete();
     }
 
     /**
      * @param array $data
+     *
      * @return array
      */
     public function handleSelectResult(array $data)
     {
-        if (!Arr::get($data, 'rows', false))
+        if (!Arr::get($data, 'rows', false)) {
             return [];
+        }
 
         $fields = collect($data['schema']['fields'])->map(function ($item) {
             return $item['name'];
@@ -87,10 +89,12 @@ class BigQuery
 
     /**
      * @param QueryJobConfiguration $query
-     * @param BigQueryClient $client
-     * @param int $try
-     * @return \Google\Cloud\BigQuery\QueryResults
+     * @param BigQueryClient        $client
+     * @param int                   $try
+     *
      * @throws \Exception
+     *
+     * @return \Google\Cloud\BigQuery\QueryResults
      */
     public function runQuery(QueryJobConfiguration $query, BigQueryClient $client, int $try = 5)
     {
@@ -103,24 +107,27 @@ class BigQuery
                 }
                 sleep(1);
                 $qr->reload();
-                --$timer;
+                $timer--;
             }
 
             return $qr;
         } catch (\Exception $e) {
-            if ($try <= 0 || $e->getCode() != 403)
+            if ($try <= 0 || $e->getCode() != 403) {
                 throw $e;
+            }
             sleep(config('bigquery.sleep_time_403', 10));
+
             return $this->runQuery($query, $client, --$try);
         }
     }
 
     /**
-     * @param string $file
-     * @param string $table
-     * @param array $fields
+     * @param string      $file
+     * @param string      $table
+     * @param array       $fields
      * @param string|null $dataset
-     * @param null $project_id
+     * @param null        $project_id
+     *
      * @throws \Exception
      */
     public function saveFromFile(string $file, string $table, array $fields, string $dataset = null, $project_id = null)
@@ -135,7 +142,7 @@ class BigQuery
                 return $tableFields->first(function ($field) use ($k) {
                     return strtolower($field['name']) == strtolower($k);
                 });
-            })->values()->toArray()
+            })->values()->toArray(),
         ];
 
         $tableBq = $client->dataset($dataset)->table($table);
@@ -157,10 +164,7 @@ class BigQuery
         });
 
         if (isset($job->info()['status']['errorResult'])) {
-            throw new \Exception('Error during saving to BQ' . PHP_EOL . print_r($job->info(), 1));
+            throw new \Exception('Error during saving to BQ'.PHP_EOL.print_r($job->info(), 1));
         }
-
-
     }
-
 }
